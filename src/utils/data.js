@@ -33,3 +33,31 @@ export const heroData = [
         price: 95,
     },
 ];
+
+export const catagories = [
+    {
+        id: 1,
+        name: 'Rice',
+        urlParameter: 'rice'
+    },
+    {
+        id: 2,
+        name: 'Fruits',
+        urlParameter: 'fruits'
+    },
+    {
+        id: 3,
+        name: 'Icecreams',
+        urlParameter: 'icecreams'
+    },
+    {
+        id: 4,
+        name: 'Desserts',
+        urlParameter: 'desserts'
+    },
+    {
+        id: 5,
+        name: 'Soft Drinks',
+        urlParameter: 'drinks'
+    },
+];

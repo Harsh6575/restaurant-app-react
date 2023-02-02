@@ -17,13 +17,6 @@ export const heroData = [
         imageSrc: F1,
         price: 99,
     },
-    {
-        id: 3,
-        title: 'Manchurian',
-        description: 'Manchurian',
-        imageSrc: C1,
-        price: 85,
-    },
 ];
 
 export const catagories = [

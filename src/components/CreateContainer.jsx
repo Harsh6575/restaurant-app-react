@@ -6,106 +6,169 @@ import { catagories } from '../utils/data';
 import Loader from './Loader';
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '../firebase.config';
+import { getAllFoodItems, saveItem } from '../utils/firebaseFunctions';
+import { useStateValue } from '../context/StateProvider';
 
 const CreateContainer = () => {
   const [title, setTitle] = useState('');
   const [calories, setCalories] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState('Select Catagory');
   const [imageAsset, setImageAsset] = useState(null);
   const [fields, setFields] = useState(false);
   const [alertStatus, setAlertStatus] = useState('danger');
   const [msg, setMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [{ foodItems }, dispatch] = useStateValue();
+
   const uploadImage = (e) => {
-    setIsLoading(true);
-    const imageFile = e.target.files[0];
-    const storageRef = ref(storage, `Images/${Date.now()}- ${imageFile.name}`)
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    setIsLoading(true); // set isLoading to true if the image is loading 
+
+    const imageFile = e.target.files[0]; // the file to upload to the   firebase storage  
+
+    const storageRef = ref(storage, `Images/${Date.now()}- ${imageFile.name}`); // the path to store the image in the firebase storage 
+
+    const uploadTask = uploadBytesResumable(storageRef, imageFile); // upload the image to the firebase storage 
 
     uploadTask.on('state_changed', (snapshot) => {
-      const uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    }, (error) => {
-      console.log(error);
-      setFields(true);
-      setAlertStatus('danger');
-      setMsg('Error uploading image. Please try again later.');
-      setTimeout(() => {
-        setFields(false);
-        setIsLoading(false);
-      }, 4000);
-    }, () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        setImageAsset(downloadURL);
-        setIsLoading(false);
-        setFields(true);
-        setAlertStatus('success');
-        setMsg('Image uploaded successfully.');
-        setTimeout(() => {
-          setFields(false);
-        }, 4000);
-      });
-    });
-  };
-  const deleteImage = () => {
-    setIsLoading(true);
-    const deleteRef = ref(storage, imageAsset);
-    deleteObject(deleteRef).then(() => {
-      setImageAsset(null);
-      setIsLoading(false);
-      setFields(true);
-      setAlertStatus('success');
-      setMsg('Image deleted successfully.');
-      setTimeout(() => {
-        setFields(false);
-      }, 4000);
-    }).catch((error) => {
-      console.log(error);
-      setFields(true);
-      setAlertStatus('danger');
-      setMsg('Error deleting image. Please try again later.');
-      setTimeout(() => {
-        setFields(false);
-        setIsLoading(false);
-      }, 4000);
-    });
-  };
-  const saveDetails = () => {
-    setIsLoading(true);
-    try {
-      if ((!title || !calories || !price || !category || !imageAsset)) {
-        setFields(true);
-        setAlertStatus('danger');
-        setMsg('Please fill all the fields.');
-        setTimeout(() => {
-          setFields(false);
-          setIsLoading(false);
-        }, 4000);
-        return;
-      } else {
-        const data = {
-          id: Date.now(),
-          title: title,
-          imageURL: imageAsset,
-          calories: calories,
-          category:category,
-          price: price,
-          qty: 1
-        }
-      }
+      const uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // get the upload progress 
+    }, (error) => { // if there is an error then log the error 
+      console.log(error); // log the error if any 
+      setFields(true); // set the fields to true 
+      setAlertStatus('danger'); // set the alert status to danger 
+      setMsg('Error uploading image. Please try again later.'); // set the message to display 
 
-    } catch (error) {
-      console.log(error);
-      setFields(true);
-      setAlertStatus('danger');
-      setMsg('Error while saving details. Please try again later.');
       setTimeout(() => {
-        setFields(false);
-        setIsLoading(false);
-      }, 4000);
-    }
+        setFields(false); // set the fields to false after 4 seconds 
+        setIsLoading(false); // set the isLoading to false 
+      }, 4000); // set the timeout to 4 seconds 
+
+    }, () => { // if the upload is successful 
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => { // get the download url of the image 
+
+        setImageAsset(downloadURL); // set the image asset to the download url 
+        setIsLoading(false); // set the isLoading to false 
+        setFields(true); // set the fields to true for loading 
+        setAlertStatus('success'); // set the alert status to success 
+        setMsg('Image uploaded successfully.'); // set the message to display 
+
+        setTimeout(() => {
+          setFields(false); // set the fields to false after 4 seconds
+        }, 4000); // set the timeout to 4 seconds 
+
+      }); // get the download url of the image 
+    }); // set the upload task on state changed 
+  }; // uploadImage function ends here 
+
+  const deleteImage = () => { // deleteImage function starts here 
+
+    setIsLoading(true); // set the isLoading to true 
+    const deleteRef = ref(storage, imageAsset); // get the reference of the image to delete 
+    deleteObject(deleteRef).then(() => { // delete the image 
+
+      setImageAsset(null); // set the image asset to null 
+      setIsLoading(false); // set the isLoading to false
+      setFields(true); // set the fields to true for loading 
+      setAlertStatus('success'); // set the alert status to success 
+      setMsg('Image deleted successfully.'); // set the message to display 
+
+      setTimeout(() => {
+        setFields(false); // set the fields to false after 4 seconds
+      }, 4000); // set the timeout to 4 seconds
+
+    }).catch((error) => { // if there is an error then log the error 
+
+      console.log(error); // log the error
+      setFields(true); // set the fields to true for loading
+      setAlertStatus('danger'); // set the alert status to danger 
+      setMsg('Error deleting image. Please try again later.'); // set the message to display the error
+
+      setTimeout(() => {
+        setFields(false); // set the fields to false after 4 seconds 
+        setIsLoading(false); // set the isLoading to false
+      }, 4000); // set the timeout to 4 seconds
+
+    }); // delete the image 
+  }; // deleteImage function ends here 
+
+  const saveDetails = () => { // saveDetails function starts here 
+
+    setIsLoading(true); // set the isLoading to true after the user clicks on the save button 
+    try { // try to save the details 
+      if ((!title || !calories || !price || !category || !imageAsset)) { // if any of the fields are empty then show the error message 
+
+        setFields(true); // set the fields to true for loading 
+        setAlertStatus('danger'); // set the alert status to danger 
+        setMsg('Please fill all the fields.'); // set the message to display the error 
+
+        setTimeout(() => {
+          setFields(false); // set the fields to false after 4 seconds 
+          setIsLoading(false); // set the isLoading to false 
+        }, 4000); // set the timeout to 4 seconds 
+
+        return; // return from the function 
+
+      } else { // if all the fields are filled then save the details
+
+        const data = { // the data to save 
+          id: Date.now(), // the id of the item 
+          title: title, // the title of the item
+          imageURL: imageAsset, // the image url of the item
+          calories: calories, // the calories of the item
+          category: category, // the category of the item
+          price: price, // the price of the item 
+          qty: 1 // the quantity of the item 
+        } // the data to save in the firebase database 
+
+        saveItem(data); // save the item in the firebase database
+        setIsLoading(false); // set the isLoading to false 
+        setFields(true); // set the fields to true for loading
+        setMsg('Details saved successfully.'); // set the message to display 
+        setAlertStatus("success"); // set the alert status to success 
+
+        setTimeout(() => {
+          setFields(false); // set the fields to false after 4 seconds
+        }, 4000); // set the timeout to 4 seconds
+
+        clearData(); // clear the data from the form
+
+      } // if all the fields are filled then save the details 
+
+    } catch (error) { // if there is an error then log the error 
+
+      console.log(error); // log the error message 
+      setFields(true); // set the fields to true for loading 
+      setAlertStatus('danger'); // set the alert status to danger 
+      setMsg('Error while saving details. Please try again later.'); // set the message to display the error 
+
+      setTimeout(() => { // set the timeout to 4 seconds 
+        setFields(false); // set the fields to false after 4 seconds 
+        setIsLoading(false); // set the isLoading to false after 4 seconds 
+      }, 4000); // set the timeout to 4 seconds 
+
+    } // try to save the details 
+
+    fetchData(); // fetch the data from the firebase database 
+
+  }; // saveDetails function ends here 
+
+  const clearData = () => {
+    setTitle(''); // set the title to empty
+    setImageAsset(null); // set the image asset to null
+    setCalories(''); // set the calories to empty
+    setPrice(''); // set the price to empty
+    setCategory("Select Catagory"); // set the category to empty
   };
+
+  const fetchData = async () => {  // fetchData function starts here 
+    await getAllFoodItems().then((data) => { // get all the food items from the firebase database 
+      dispatch({ // dispatch the action to set the food items 
+        type: "SET_FOOD_ITEMS", // set the food items 
+        foodItems: data // set the food items to the data 
+      }); // dispatch the action to set the food items 
+    }); // get all the food items from the firebase database 
+  }; // fetchData function ends here 
 
   return (
     <div className='w-full min-h-screen flex items-center justify-center'>
@@ -128,7 +191,7 @@ const CreateContainer = () => {
         <div className='w-full'>
           <select onChange={(e) => setCategory(e.target.value)}
             className='outline-none w-full border-b-2 border-gray-200 p-2 rounded-md cursor-pointer'>
-            <option value='other' className='bg-white'>Select Catagory</option>
+            <option value='other' className='bg-white'>{category}</option>
             {catagories && catagories.map((item) => <option key={item.id} className='border-0 outline-none capitalize bg-white text-emerald-800' value={item.urlParameter}>
               {item.name}
             </option>)}

@@ -22,8 +22,8 @@ export const heroData = [
 export const catagories = [
     {
         id: 1,
-        name: 'Rice',
-        urlParameter: 'rice'
+        name: 'Fast food',
+        urlParameter: 'fastfood'
     },
     {
         id: 2,
@@ -41,8 +41,3 @@ export const catagories = [
         urlParameter: 'drinks'
     },
 ];
-        // {
-        //     id: 4,
-        //     name: 'Desserts',
-        //     urlParameter: 'desserts'
-        // },

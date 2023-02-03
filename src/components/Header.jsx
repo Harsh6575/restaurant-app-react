@@ -14,7 +14,7 @@ const Header = () => {
   const firebaseAuth = getAuth(app); // firebase auth instance from firebase config
   const provider = new GoogleAuthProvider(); // google auth provider from firebase auth instance
 
-  const [{ user }, dispatch] = useStateValue(); // state from context api
+  const [{ user, cartShow }, dispatch] = useStateValue(); // state from context api
 
   const login = async () => {
     if (!user) {
@@ -42,6 +42,13 @@ const Header = () => {
       user: null
     }); // set user data to context api state on logout
   }; // logout function from firebase auth instance and remove user data from local storage and context api state and set isMenu to false to hide menu on click avatar image and redirect to home page after logout user
+
+  const showCart = () => {
+    dispatch({
+      type: "SET_CART_SHOW",
+      cartShow: !cartShow
+    });
+  }
 
   return (
     <div className="fixed w-screen z-50 p-3 md:p-6 px-4 md:px-16 bg-primary">
@@ -71,7 +78,7 @@ const Header = () => {
               Service
             </li>
           </motion.ul>
-          <div className="relative flex justify-center items-center">
+          <div className="relative flex justify-center items-center" onClick={showCart}>
             <MdShoppingBasket className="text-textColor text-2xl cursor-pointer" />
             <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
               <p className="text-center text-white text-sm font-bold">1</p>
@@ -111,7 +118,7 @@ const Header = () => {
       </div>
       {/* Mobile */}
       <div className="flex items-center justify-between md:hidden w-full p-4 h-full">
-        <div className="relative flex justify-center items-center">
+        <div className="relative flex justify-center items-center" onClick={showCart}>
           <MdShoppingBasket className="text-textColor text-2xl cursor-pointer" />
           <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
             <p className="text-center text-white text-sm font-bold">1</p>

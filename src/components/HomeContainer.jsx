@@ -30,11 +30,8 @@ const HomeContainer = () => {
           </span>
         </p>
 
-        <p className="text-base text-textColor text-center md:text-left md:w-[80%]">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima velit
-          eaque fugit distinctio est nam voluptatum architecto, porro iusto
-          deserunt recusandae ipsa minus eos sunt, dolores illo repellat facere
-          suscipit!
+        <p className="text-base text-textColor text-center md:text-left md:w-[80%] capitalize">
+          This web app is made with react js and firebase. There are also some packages are used for it like react router dom , tailwind css,framer motion etc. There are still some gliches are there. I will fix it soon. thank you.
         </p>
 
         <button

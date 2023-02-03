@@ -14,7 +14,7 @@ const Header = () => {
   const firebaseAuth = getAuth(app); // firebase auth instance from firebase config
   const provider = new GoogleAuthProvider(); // google auth provider from firebase auth instance
 
-  const [{ user, cartShow }, dispatch] = useStateValue(); // state from context api
+  const [{ user, cartShow, cartItems }, dispatch] = useStateValue(); // state from context api
 
   const login = async () => {
     if (!user) {
@@ -80,9 +80,11 @@ const Header = () => {
           </motion.ul>
           <div className="relative flex justify-center items-center" onClick={showCart}>
             <MdShoppingBasket className="text-textColor text-2xl cursor-pointer" />
-            <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
-              <p className="text-center text-white text-sm font-bold">1</p>
-            </div>
+            {cartItems && cartItems.length > 0 && (
+              <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
+                <p className="text-center text-white text-sm font-bold">{cartItems.length}</p>
+              </div>
+            )}
           </div>
           <div className="relative">
             <motion.img
@@ -120,9 +122,11 @@ const Header = () => {
       <div className="flex items-center justify-between md:hidden w-full p-4 h-full">
         <div className="relative flex justify-center items-center" onClick={showCart}>
           <MdShoppingBasket className="text-textColor text-2xl cursor-pointer" />
-          <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
-            <p className="text-center text-white text-sm font-bold">1</p>
-          </div>
+          {cartItems && cartItems.length > 0 && (
+            <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
+              <p className="text-center text-white text-sm font-bold">{cartItems.length}</p>
+            </div>
+          )}
         </div>
         <Link to={"/"} className="flex items-center gap-2">
           <img src={Logo} alt="logo" className="w-10 object-cover" />
